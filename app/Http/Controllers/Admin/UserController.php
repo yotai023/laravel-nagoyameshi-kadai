@@ -20,17 +20,17 @@ class UserController extends Controller
             });
         }
 
-        $user = $query->paginate(10);
-        $total = $user->total(); 
+        $users = $query->paginate(10);
+        $total = $users->total(); 
 
-        return view('admin.users.index', compact('user', 'keyword', 'total'));
+        return view('admin.users.index', compact('users', 'keyword', 'total'));
     }
 
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        $users = User::findOrFail($id);
 
-        return view('admin.users.show',compact('user'));
+        return view('admin.users.show',compact('users'));
     }
 
 }

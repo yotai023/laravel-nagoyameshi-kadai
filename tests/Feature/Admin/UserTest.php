@@ -23,7 +23,7 @@ class UserTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('admin/users')); 
+        $response = $this->actingAs($user)->get(route('admin.users.index')); 
         $response->assertRedirect('admin/login');
     }
 
@@ -35,7 +35,7 @@ class UserTest extends TestCase
         $admin->save();
 
         $response=$this->actingAs($admin, 'admin')->get(route('admin.users.index'));
-        $response->assertStatus(200); // 检查管理员可以访问
+        $response->assertStatus(200); 
     }
 
     // 会員詳細ページのテスト
@@ -50,7 +50,7 @@ class UserTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('admin.users.show',$user)); 
+        $response = $this->actingAs($user)->get(route('admin.users.show',['id'=> 1])); 
         $response->assertRedirect('admin/login');
     }
 
@@ -60,9 +60,10 @@ class UserTest extends TestCase
         $admin->email = 'admin@example.com';
         $admin->password = Hash::make('nagoyameshi');
         $admin->save();
+        $user = User::factory()->create();
 
-        $response = $this->get('/admin/users/show/1');
-        $response->assertStatus(200); // 检查管理员可以访问
-        $response->assertSee('会員詳細');
+        $response = $this->get(route('admin.users.show',['id'=> $user->id]));
+        $response->assertStatus(200);
+        $response->assertSee($user->name);
     }
 }

@@ -31,5 +31,4 @@ class Admin extends Authenticatable
         'remember_token',
     ];
 
-    protected $connection = 'admin';
 }
