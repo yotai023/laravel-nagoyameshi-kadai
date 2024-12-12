@@ -37,7 +37,7 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->kana }}</td>
                                 <td>{{ $user->email }}</td>
-                                <td><a href="{{ route('admin.users.show', $user) }}">詳細</a></td>
+                                <td><a href="{{ route('admin.users.show', $user->id) }}">詳細</a></td>
                             </tr>
                         @endforeach
                     </tbody>
