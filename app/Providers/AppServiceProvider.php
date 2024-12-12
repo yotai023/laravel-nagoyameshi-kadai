@@ -26,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('http');
         }
 
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
+
         Paginator::useBootstrap();
     }
 }
