@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RestaurantController;
+use App\Http\Controllers\Admin\CategoryController;
 
 
 /*
@@ -30,4 +31,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
     Route::get('users/{id}', [UserController::class, 'show'])->name('users.show');
 
     Route::resource('restaurants', RestaurantController::class);
+
+    Route::resource('categories', CategoryController::class);
 });

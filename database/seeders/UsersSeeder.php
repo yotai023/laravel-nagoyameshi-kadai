@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UsersSeeder extends Seeder
 {
@@ -27,5 +28,6 @@ class UsersSeeder extends Seeder
         $user->save();*/
 
         User::factory()->count(100)->create();
+
     }
 }
