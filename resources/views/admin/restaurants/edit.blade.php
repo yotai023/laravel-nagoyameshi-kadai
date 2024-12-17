@@ -153,12 +153,64 @@
                     </div>
 
                     <div class="form-group row mb-3">
+                        <label class="col-md-5 col-form-label text-md-left fw-bold">定休日</label>
+
+                        <div class="col-md-7 d-flex flex-wrap">
+                            @foreach ($regular_holidays as $index => $regular_holiday)
+                                <div class="form-check d-flex align-items-center me-3">
+                                    @if ($restaurant->regular_holidays()->where('regular_holiday_id', $regular_holiday->id)->exists())
+                                        <input type="checkbox" class="form-check-input" id="regularHoliday{{ $index }}" name="regular_holiday_ids[]" value="{{ $regular_holiday->id }}" checked>
+                                    @else
+                                        <input type="checkbox" class="form-check-input" id="regularHoliday{{ $index }}" name="regular_holiday_ids[]" value="{{ $regular_holiday->id }}">
+                                    @endif
+                                    <label class="form-check-label" for="regularHoliday{{ $index }}"><span class="badge bg-secondary ms-1">{{ $regular_holiday->day }}</span></label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-3">
                         <label for="seating_capacity" class="col-md-5 col-form-label text-md-left fw-bold">座席数</label>
 
                         <div class="col-md-7">
                             <input type="number" class="form-control" id="seating_capacity" name="seating_capacity" value="{{ old('seating_capacity', $restaurant->seating_capacity) }}">
                         </div>
                     </div>
+
+                    @for ($i = 0; $i < 3; $i++)
+                        <div class="form-group row mb-3">
+                            <label for="category{{ $i + 1 }}" class="col-md-5 col-form-label text-md-left fw-bold">カテゴリ{{ $i + 1 }}（3つまで選択可）</label>
+
+                            <div class="col-md-7">
+                                <select class="form-control form-select" id="category{{ $i + 1 }}" name="category_ids[]">
+                                    <option value="">選択なし</option>
+                                    @if (old('category_ids'))
+                                        @foreach ($categories as $category)
+                                            @if ($category->id == old("category_ids.{$i}"))
+                                                <option value="{{ $category->id }}" selected>{{ $category->name }}</option>
+                                            @else
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    @else
+                                        @if (array_key_exists($i, $category_ids))
+                                            @foreach ($categories as $category)
+                                                @if ($category->id == $category_ids[$i])
+                                                    <option value="{{ $category->id }}" selected>{{ $category->name }}</option>
+                                                @else
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach
+                                        @endif
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                    @endfor
 
                     <hr class="my-4">
 

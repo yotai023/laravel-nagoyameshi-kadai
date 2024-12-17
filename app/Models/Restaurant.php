@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\RegularHoliday;
+use App\Models\Category;
 
 class Restaurant extends Model
 {
@@ -21,4 +23,14 @@ class Restaurant extends Model
         'closing_time',
         'seating_capacity',
     ];
+
+    public function regular_holidays()
+    {
+        return $this->belongsToMany(RegularHoliday::class);
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
 }

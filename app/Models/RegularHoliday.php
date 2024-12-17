@@ -4,14 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Restaurant;
 
-class Category extends Model
+class RegularHoliday extends Model
 {
     use HasFactory;
 
-    /**
-     * 店舗との関連付け
-     */
+    protected $table = 'regular_holidays';
+
+    protected $fillable = [
+        'day',
+        'day_index'
+    ];
+
     public function restaurants()
     {
         return $this->belongsToMany(Restaurant::class);
