@@ -2,12 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\RestaurantController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
 
 
 /*
@@ -30,8 +31,8 @@ require __DIR__ . '/auth.php';
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin'], function () {
     Route::get('home', [AdminHomeController::class, 'index'])->name('home');
 
-    Route::get('users', [UserController::class, 'index'])->name('users.index');
-    Route::get('users/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('users/{id}', [AdminUserController::class, 'show'])->name('users.show');
 
     Route::resource('restaurants', RestaurantController::class);
 
@@ -43,6 +44,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
 });
 
 
-Route::group(['middleware' => 'guest:admin'], function () {
+Route::group(['middleware' => 'auth', 'verified','guest:admin'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
+
+    Route::resource('user', UserController::class)->only(['index', 'edit', 'update']);
+
 });
