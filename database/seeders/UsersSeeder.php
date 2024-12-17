@@ -16,7 +16,7 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
-       /* $user = new User();
+        /*$user = new User();
         $user->name = "太郎";
         $user->kana = "タロウ";
         $user->email = 'tarou@example.com';
@@ -28,6 +28,5 @@ class UsersSeeder extends Seeder
         $user->save();*/
 
         User::factory()->count(100)->create();
-
     }
 }
