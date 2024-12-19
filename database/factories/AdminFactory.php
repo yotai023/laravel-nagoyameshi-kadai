@@ -15,7 +15,6 @@ class AdminFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
             'password' => bcrypt('password'), // 默认密码
             'remember_token' => $this->faker->lexify('??????????'),

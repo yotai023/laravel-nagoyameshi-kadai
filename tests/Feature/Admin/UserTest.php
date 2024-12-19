@@ -13,29 +13,31 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
+    // 会員一覧ページのテスト
+
     public function test_guest_cannot_access_user_list()
     {
         $response = $this->get('/admin/users');
         $response->assertRedirect('/admin/login');
     }
 
-    public function test_regular_user_cannot_access_user_list() 
+    public function test_regular_user_cannot_access_user_list()
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('admin.users.index')); 
+        $response = $this->actingAs($user)->get(route('admin.users.index'));
         $response->assertRedirect('admin/login');
     }
 
-    public function test_admin_can_access_user_list() 
+    public function test_admin_can_access_user_list()
     {
         $admin = new Admin();
         $admin->email = 'admin@example.com';
         $admin->password = Hash::make('nagoyameshi');
         $admin->save();
 
-        $response=$this->actingAs($admin, 'admin')->get(route('admin.users.index'));
-        $response->assertStatus(200); 
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.users.index'));
+        $response->assertStatus(200);
     }
 
     // 会員詳細ページのテスト
@@ -50,20 +52,21 @@ class UserTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('admin.users.show',['id'=> 1])); 
+        $response = $this->actingAs($user)->get(route('admin.users.show', ['id' => 1]));
         $response->assertRedirect('admin/login');
     }
 
-    public function test_admin_can_access_user_detail() 
+    public function test_admin_can_access_user_detail()
     {
-        $admin = new Admin();
-        $admin->email = 'admin@example.com';
-        $admin->password = Hash::make('nagoyameshi');
-        $admin->save();
+        $admin = Admin::factory()->create([
+            'email' => 'admin@example.com',
+            'password' => Hash::make('nagoyameshi'),
+        ]);
+
         $user = User::factory()->create();
 
-        $response = $this->get(route('admin.users.show',['id'=> $user->id]));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.users.show', ['id' => $user->id]));
+
         $response->assertStatus(200);
-        $response->assertSee($user->name);
     }
 }

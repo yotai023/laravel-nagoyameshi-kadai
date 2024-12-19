@@ -3,12 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\RestaurantController;
+use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RestaurantController;
 
 
 /*
@@ -34,7 +35,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
     Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
     Route::get('users/{id}', [AdminUserController::class, 'show'])->name('users.show');
 
-    Route::resource('restaurants', RestaurantController::class);
+    Route::resource('restaurants', AdminRestaurantController::class);
 
     Route::resource('categories', CategoryController::class);
 
@@ -43,10 +44,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
     Route::resource('terms', TermController::class)->only(['index', 'edit', 'update']);
 });
 
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::group(['middleware' => 'auth', 'verified','guest:admin'], function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
-
+    
     Route::resource('user', UserController::class)->only(['index', 'edit', 'update']);
 
 });
+
+Route::get('restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
