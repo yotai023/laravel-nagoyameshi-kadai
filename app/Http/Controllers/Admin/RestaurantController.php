@@ -65,8 +65,8 @@ class RestaurantController extends Controller
             'highest_price' => 'required|numeric|min:0|gte:lowest_price',
             'postal_code' => 'required|numeric|digits:7',
             'address' => 'required|string|max:255',
-            'opening_time' => 'required|date|before:closing_time',
-            'closing_time' => 'required|date|after:opening_time',
+            'opening_time' => 'required|date_format:H:i|before:closing_time',
+            'closing_time' => 'required|date_format:H:i|after:opening_time',
             'seating_capacity' => 'nullable|numeric|min:0',
         ]);
 
@@ -131,8 +131,8 @@ class RestaurantController extends Controller
             'highest_price' => 'required|numeric|min:0|gte:lowest_price',
             'postal_code' => 'required|numeric|digits:7',
             'address' => 'required|string|max:255',
-            'opening_time' => 'required|date|before:closing_time',
-            'closing_time' => 'required|date|after:opening_time',
+            'opening_time' => 'required|date_format:H:i|before:closing_time',
+            'closing_time' => 'required|date_format:H:i|after:opening_time',
             'seating_capacity' => 'nullable|numeric|min:0',
         ]);
 
