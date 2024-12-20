@@ -159,7 +159,7 @@ class RestaurantController extends Controller
         $category_ids = array_filter($request->input('category_ids'));
         $restaurant->categories()->sync($category_ids);
 
-        $restaurant->regularHolidays()->sync($request->regular_holiday_ids ?? []);
+        $restaurant->regular_holidays()->sync($request->regular_holiday_ids ?? []);
 
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗情報を編集しました。');
     }
@@ -171,6 +171,6 @@ class RestaurantController extends Controller
     {
         $restaurant->delete();
 
-        return redirect()->route('admin.restaurants.show')->with('flash_message', '店舗を削除しました。');
+        return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を削除しました。');
     }
 }

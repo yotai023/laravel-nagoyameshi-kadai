@@ -46,10 +46,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::group(['middleware' => 'auth', 'verified','guest:admin'], function () {
-    
+Route::group(['middleware' => 'auth', 'verified','guest:admin'], function () {  
     Route::resource('user', UserController::class)->only(['index', 'edit', 'update']);
 
 });
 
 Route::get('restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
+
+Route::get('restaurants/{id}',[RestaurantController::class, 'show'])->name('restaurants.show');

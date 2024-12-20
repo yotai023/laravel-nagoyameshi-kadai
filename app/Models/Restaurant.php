@@ -40,7 +40,7 @@ class Restaurant extends Model
 
     public function regular_holidays()
     {
-        return $this->belongsToMany(RegularHoliday::class);
+        return $this->belongsToMany(RegularHoliday::class, 'regular_holiday_restaurant');
     }
     
 }

@@ -16,7 +16,7 @@ class RestaurantController extends Controller
         $keyword = $request->input('keyword');
         $category_id = $request->input('category_id');
         $price = $request->input('price');
-        
+
         // 並び替えの設定
         $sorts = [
             '掲載日が新しい順' => 'created_at desc',
@@ -38,18 +38,18 @@ class RestaurantController extends Controller
 
         // キーワード検索
         if ($keyword) {
-            $query->where(function($q) use ($keyword) {
+            $query->where(function ($q) use ($keyword) {
                 $q->where('name', 'like', "%{$keyword}%")
-                  ->orWhere('address', 'like', "%{$keyword}%")
-                  ->orWhereHas('categories', function($q) use ($keyword) {
-                      $q->where('categories.name', 'like', "%{$keyword}%");
-                  });
+                    ->orWhere('address', 'like', "%{$keyword}%")
+                    ->orWhereHas('categories', function ($q) use ($keyword) {
+                        $q->where('categories.name', 'like', "%{$keyword}%");
+                    });
             });
         }
 
         // カテゴリによる絞り込み
         if ($category_id) {
-            $query->whereHas('categories', function($q) use ($category_id) {
+            $query->whereHas('categories', function ($q) use ($category_id) {
                 $q->where('categories.id', $category_id);
             });
         }
@@ -61,8 +61,8 @@ class RestaurantController extends Controller
 
         // 並び替えとページネーションの適用
         $restaurants = $query->sortable($sort_query)
-                           ->orderBy('created_at', 'desc')
-                           ->paginate(15);
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
 
         // 総件数の取得
         $total = $restaurants->total();
@@ -80,5 +80,11 @@ class RestaurantController extends Controller
             'categories',
             'total'
         ));
+    }
+
+    public function show($id)
+    {
+        $restaurant = Restaurant::findOrFail($id);
+        return view('restaurants.show', compact('restaurant'));
     }
 }

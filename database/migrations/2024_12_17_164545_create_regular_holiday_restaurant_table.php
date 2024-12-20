@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('regular_holiday_restaurant', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('restaurant_id')
                 ->constrained('restaurants')
                 ->cascadeOnDelete();
@@ -20,6 +19,8 @@ return new class extends Migration
                 ->constrained('regular_holidays')
                 ->cascadeOnDelete();
             $table->timestamps();
+
+            $table->primary(['restaurant_id', 'regular_holiday_id']);
         });
     }
 

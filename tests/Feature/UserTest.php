@@ -8,12 +8,11 @@ use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
+    use RefreshDatabase;
+
+    public function test_guest_can_using_restaurant_page(): void
     {
-        $response = $this->get('/');
+        $response = $this->get('/restaurants');
 
         $response->assertStatus(200);
     }

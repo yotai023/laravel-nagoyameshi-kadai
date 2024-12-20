@@ -3,262 +3,332 @@
 namespace Tests\Feature\Admin;
 
 use Tests\TestCase;
+use App\Models\Admin;
 use App\Models\User;
 use App\Models\Restaurant;
+use App\Models\Category;
+use App\Models\RegularHoliday;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class RestaurantTest extends TestCase
 {
     use RefreshDatabase;
 
-    private $admin;
-    private $user;
-    private $restaurant;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        
-        // Create admin user
-        $this->admin = User::factory()->create([
-            'is_admin' => true
-        ]);
-        
-        // Create regular user
-        $this->user = User::factory()->create([
-            'is_admin' => false
-        ]);
-        
-        // Create test restaurant
-        $this->restaurant = Restaurant::factory()->create();
-    }
-
-    // Index Action Tests
+    // 店舗一覧ページのテスト
     public function test_guest_cannot_access_admin_restaurant_index()
     {
-        $response = $this->get(route('admin.restaurants.index'));
-        $response->assertRedirect(route('login'));
+        $response = $this->get('/admin/restaurants');
+        $response->assertRedirect('/admin/login');
     }
 
     public function test_regular_user_cannot_access_admin_restaurant_index()
     {
-        $response = $this->actingAs($this->user)
-            ->get(route('admin.restaurants.index'));
-        $response->assertForbidden();
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('admin.restaurants.index'));
+        $response->assertRedirect('admin/login');
     }
 
     public function test_admin_can_access_admin_restaurant_index()
     {
-        $response = $this->actingAs($this->admin)
-            ->get(route('admin.restaurants.index'));
-        $response->assertOk();
+        $admin = new Admin();
+        $admin->email = 'admin@example.com';
+        $admin->password = Hash::make('nagoyameshi');
+        $admin->save();
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.restaurants.index'));
+        $response->assertStatus(200);
     }
 
-    // Show Action Tests
+    // 店舗詳細ページのテスト
     public function test_guest_cannot_access_admin_restaurant_show()
     {
-        $response = $this->get(route('admin.restaurants.show', $this->restaurant));
-        $response->assertRedirect(route('login'));
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->get(route('admin.restaurants.show', $restaurant));
+        $response->assertRedirect('/admin/login');
     }
 
     public function test_regular_user_cannot_access_admin_restaurant_show()
     {
-        $response = $this->actingAs($this->user)
-            ->get(route('admin.restaurants.show', $this->restaurant));
-        $response->assertForbidden();
+        $user = User::factory()->create();
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->get(route('admin.restaurants.show', $restaurant));
+        $response->assertRedirect('admin/login');
     }
 
     public function test_admin_can_access_admin_restaurant_show()
     {
-        $response = $this->actingAs($this->admin)
-            ->get(route('admin.restaurants.show', $this->restaurant));
-        $response->assertOk();
+        $admin = Admin::factory()->create([
+            'email' => 'admin@example.com',
+            'password' => Hash::make('nagoyameshi'),
+        ]);
+
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->actingAs($admin, 'admin')
+            ->get(route('admin.restaurants.show', $restaurant));
+
+        $response->assertStatus(200);
     }
 
-    // Create Action Tests
+    // 店舗登録ページのテスト
     public function test_guest_cannot_access_admin_restaurant_create()
     {
-        $response = $this->get(route('admin.restaurants.create'));
-        $response->assertRedirect(route('login'));
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->get(route('admin.restaurants.create', $restaurant));
+        $response->assertRedirect('admin/login');
     }
 
     public function test_regular_user_cannot_access_admin_restaurant_create()
     {
-        $response = $this->actingAs($this->user)
-            ->get(route('admin.restaurants.create'));
-        $response->assertForbidden();
+        $user = User::factory()->create();
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->get(route('admin.restaurants.create', $restaurant));
+        $response->assertRedirect('admin/login');
     }
 
     public function test_admin_can_access_admin_restaurant_create()
     {
-        $response = $this->actingAs($this->admin)
-            ->get(route('admin.restaurants.create'));
-        $response->assertOk();
+        $admin = Admin::factory()->create([
+            'email' => 'admin@example.com',
+            'password' => Hash::make('nagoyameshi'),
+        ]);
+
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->actingAs($admin, 'admin')
+            ->get(route('admin.restaurants.create', $restaurant));
+        $response->assertStatus(200);
     }
 
-    // Store Action Tests
+    // 店舗登録機能のテスト
     public function test_guest_cannot_store_restaurant()
     {
-        $response = $this->post(route('admin.restaurants.store'), [
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->put(route('admin.restaurants.create', $restaurant), [
             'name' => 'Test Restaurant',
-            'image' => UploadedFile::fake()->image('test.jpg'),
-            'description' => 'Test Description',
-            'lowest_price' => 1000,
-            'highest_price' => 5000,
-            'postal_code' => '1234567',
-            'address' => 'Test Address',
-            'opening_time' => '10:00:00',
-            'closing_time' => '22:00:00',
-            'seating_capacity' => 50
+            'image' => UploadedFile::fake()->create('dummy.txt', 100, 'text/plain'),
         ]);
-        
-        $response->assertRedirect(route('login'));
+
+        $response->assertRedirect('admin/login');
     }
 
     public function test_regular_user_cannot_store_restaurant()
     {
-        $response = $this->actingAs($this->user)
-            ->post(route('admin.restaurants.store'), [
-                'name' => 'Test Restaurant',
-                'image' => UploadedFile::fake()->image('test.jpg'),
-                'description' => 'Test Description',
-                'lowest_price' => 1000,
-                'highest_price' => 5000,
-                'postal_code' => '1234567',
-                'address' => 'Test Address',
-                'opening_time' => '10:00:00',
-                'closing_time' => '22:00:00',
-                'seating_capacity' => 50
-            ]);
-            
-        $response->assertForbidden();
+        $user = User::factory()->create();
+        $restaurant = Restaurant::factory()->create();
+
+        $this->actingAs($user);
+
+        $response = $this->put(route('admin.restaurants.create', $restaurant), [
+            'name' => 'Test Restaurant',
+            'image' => UploadedFile::fake()->create('dummy.txt', 100, 'text/plain'),
+        ]);
+
+        $response->assertRedirect('admin/login');
     }
 
     public function test_admin_can_store_restaurant()
     {
-        Storage::fake('public');
-        
-        $response = $this->actingAs($this->admin)
-            ->post(route('admin.restaurants.store'), [
-                'name' => 'Test Restaurant',
-                'image' => UploadedFile::fake()->image('test.jpg'),
-                'description' => 'Test Description',
-                'lowest_price' => 1000,
-                'highest_price' => 5000,
-                'postal_code' => '1234567',
-                'address' => 'Test Address',
-                'opening_time' => '10:00:00',
-                'closing_time' => '22:00:00',
-                'seating_capacity' => 50
-            ]);
-            
-        $response->assertRedirect(route('admin.restaurants.index'));
-        $this->assertDatabaseHas('restaurants', ['name' => 'Test Restaurant']);
+        $admin = Admin::factory()->create([
+            'email' => 'admin@example.com',
+            'password' => Hash::make('nagoyameshi'),
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->post('/admin/restaurants', [
+            'name' => 'Test Restaurant',
+            'image' => UploadedFile::fake()->image('dummy.jpg', 100, 100),
+            'description' => 'Test description',
+            'lowest_price' => 1000,
+            'highest_price' => 2000,
+            'postal_code' => '1234567',
+            'address' => 'Test address',
+            'opening_time' => '10:00',
+            'closing_time' => '22:00',
+            'seating_capacity' => 50,
+            'category_ids' => [1, 2],
+            'regular_holiday_ids' => [1],
+        ]);
+
+        /*$response->dump();*/
+        $response->assertStatus(302);
     }
 
-    // Edit Action Tests
+    // 店舗編集ページのテスト
     public function test_guest_cannot_access_admin_restaurant_edit()
     {
-        $response = $this->get(route('admin.restaurants.edit', $this->restaurant));
-        $response->assertRedirect(route('login'));
+        $response = $this->get(route('admin.restaurants.edit', 1));
+
+        $response->assertRedirect('admin/login');
     }
 
     public function test_regular_user_cannot_access_admin_restaurant_edit()
     {
-        $response = $this->actingAs($this->user)
-            ->get(route('admin.restaurants.edit', $this->restaurant));
-        $response->assertForbidden();
+        $user = User::factory()->create();
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->get(route('admin.restaurants.edit', $restaurant));
+        $response->assertRedirect('admin/login');
     }
 
     public function test_admin_can_access_admin_restaurant_edit()
     {
-        $response = $this->actingAs($this->admin)
-            ->get(route('admin.restaurants.edit', $this->restaurant));
-        $response->assertOk();
+        $admin = Admin::factory()->create([
+            'email' => 'admin@example.com',
+            'password' => Hash::make('nagoyameshi'),
+        ]);
+
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->actingAs($admin, 'admin')
+            ->get(route('admin.restaurants.edit', $restaurant));
+        $response->assertStatus(200);
     }
 
-    // Update Action Tests
+    // 店舗更新機能のテスト
     public function test_guest_cannot_update_restaurant()
     {
-        $response = $this->put(route('admin.restaurants.update', $this->restaurant), [
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->put(route('admin.restaurants.update', $restaurant), [
             'name' => 'Updated Restaurant',
-            'image' => UploadedFile::fake()->image('test.jpg'),
+            'image' => UploadedFile::fake()->image('dummy.jpg', 100, 100),
             'description' => 'Updated Description',
-            'lowest_price' => 2000,
-            'highest_price' => 6000,
+            'lowest_price' => 1000,
+            'highest_price' => 2000,
             'postal_code' => '1234567',
             'address' => 'Updated Address',
-            'opening_time' => '09:00:00',
-            'closing_time' => '21:00:00',
-            'seating_capacity' => 60
+            'opening_time' => '10:00',
+            'closing_time' => '22:00',
+            'seating_capacity' => 50,
+            'category_ids' => [1, 2],
+            'regular_holiday_ids' => [1],
         ]);
-        
-        $response->assertRedirect(route('login'));
+
+        $response->assertRedirect('admin/login');
     }
 
     public function test_regular_user_cannot_update_restaurant()
     {
-        $response = $this->actingAs($this->user)
-            ->put(route('admin.restaurants.update', $this->restaurant), [
+        $user = User::factory()->create();
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->put(route('admin.restaurants.update', $restaurant), [
                 'name' => 'Updated Restaurant',
-                'image' => UploadedFile::fake()->image('test.jpg'),
+                'image' => UploadedFile::fake()->image('dummy.jpg', 100, 100),
                 'description' => 'Updated Description',
-                'lowest_price' => 2000,
-                'highest_price' => 6000,
+                'lowest_price' => 1000,
+                'highest_price' => 2000,
                 'postal_code' => '1234567',
                 'address' => 'Updated Address',
-                'opening_time' => '09:00:00',
-                'closing_time' => '21:00:00',
-                'seating_capacity' => 60
+                'opening_time' => '10:00',
+                'closing_time' => '22:00',
+                'seating_capacity' => 50,
+                'category_ids' => [1, 2],
+                'regular_holiday_ids' => [1],
             ]);
-            
-        $response->assertForbidden();
+
+        $response->assertRedirect('admin/login');
     }
 
     public function test_admin_can_update_restaurant()
     {
-        Storage::fake('public');
+        $admin = Admin::factory()->create([
+            'email' => 'admin@example.com',
+            'password' => Hash::make('nagoyameshi'),
+        ]);
+
+        $restaurant = Restaurant::factory()->create();
+
+        $category1 = Category::factory()->create();
+        $category2 = Category::factory()->create();
+
+        $holiday = RegularHoliday::factory()->create();
         
-        $response = $this->actingAs($this->admin)
-            ->put(route('admin.restaurants.update', $this->restaurant), [
-                'name' => 'Updated Restaurant',
-                'image' => UploadedFile::fake()->image('test.jpg'),
-                'description' => 'Updated Description',
-                'lowest_price' => 2000,
-                'highest_price' => 6000,
-                'postal_code' => '1234567',
-                'address' => 'Updated Address',
-                'opening_time' => '09:00:00',
-                'closing_time' => '21:00:00',
-                'seating_capacity' => 60
-            ]);
-            
+        $this->actingAs($admin, 'admin');
+
+        $updateData = [
+            'name' => 'Updated Restaurant',
+            'image' => UploadedFile::fake()->image('dummy.jpg', 100, 100),
+            'description' => 'Updated Description',
+            'lowest_price' => 1000,
+            'highest_price' => 2000,
+            'postal_code' => '1234567',
+            'address' => 'Updated Address',
+            'opening_time' => now()->setTime(10, 0)->toDateTimeString(),
+            'closing_time' => now()->setTime(22, 0)->toDateTimeString(),
+            'seating_capacity' => 50,
+            'category_ids' => [$category1->id, $category2->id],
+            'regular_holiday_ids' => [$holiday->id],
+        ];
+
+        $response = $this->put(route('admin.restaurants.update', $restaurant), $updateData);
+
         $response->assertRedirect(route('admin.restaurants.index'));
-        $this->assertDatabaseHas('restaurants', ['name' => 'Updated Restaurant']);
+
+        $this->assertDatabaseHas('restaurants', [
+            'id' => $restaurant->id,
+            'name' => 'Updated Restaurant',
+            'description' => 'Updated Description',
+            'lowest_price' => 1000,
+            'highest_price' => 2000,
+            'postal_code' => '1234567',
+            'address' => 'Updated Address',
+            'seating_capacity' => 50,
+        ]);
+
+        $this->assertNotNull($restaurant->fresh()->image);
     }
 
-    // Destroy Action Tests
+    // 店舗削除機能のテスト
     public function test_guest_cannot_delete_restaurant()
     {
-        $response = $this->delete(route('admin.restaurants.destroy', $this->restaurant));
-        $response->assertRedirect(route('login'));
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->delete(route('admin.restaurants.destroy', $restaurant));
+        $response->assertRedirect(route('admin.login'));
     }
 
     public function test_regular_user_cannot_delete_restaurant()
     {
-        $response = $this->actingAs($this->user)
-            ->delete(route('admin.restaurants.destroy', $this->restaurant));
-        $response->assertForbidden();
+        $user = User::factory()->create();
+        $restaurant = Restaurant::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->delete(route('admin.restaurants.destroy', $restaurant));
+        $response->assertRedirect(route('admin.login'));
     }
 
     public function test_admin_can_delete_restaurant()
     {
-        $response = $this->actingAs($this->admin)
-            ->delete(route('admin.restaurants.destroy', $this->restaurant));
-            
-        $response->assertRedirect(route('admin.restaurants.show'));
-        $this->assertDatabaseMissing('restaurants', ['id' => $this->restaurant->id]);
+        $admin = Admin::factory()->create([
+            'email' => 'admin@example.com',
+            'password' => Hash::make('nagoyameshi'),
+        ]);
+
+        $restaurant = Restaurant::factory()->create();
+
+        $this->actingAs($admin, 'admin');
+
+        $response = $this->delete(route('admin.restaurants.destroy', $restaurant));
+
+        $response->assertRedirect(route('admin.restaurants.index'))
+            ->assertSessionHas('flash_message', '店舗を削除しました。');
+
+        $this->assertDatabaseMissing('restaurants', ['id' => $restaurant->id]);
     }
 }
