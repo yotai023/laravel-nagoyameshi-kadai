@@ -46,8 +46,8 @@
             @endif
 
             <div class="mb-2">
-                @if ($restaurant->image_data)
-                <img src="data:image/jpeg;base64,{{ $restaurant->image_data }}" class="w-100" alt="{{ $restaurant->name }}">
+                @if ($restaurant->image)
+                <img src="data:image/jpeg;base64,{{ $restaurant->image }}" class="w-100" alt="{{ $restaurant->name }}">
                 @else
                 <img src="{{ asset('/images/no_image.jpg') }}" class="w-100" alt="デフォルト画像">
                 @endif

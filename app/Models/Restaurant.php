@@ -30,7 +30,6 @@ class Restaurant extends Model
 
     protected $fillable = [
         'name',
-        'image',
         'description',
         'lowest_price',
         'highest_price',
@@ -39,7 +38,7 @@ class Restaurant extends Model
         'opening_time',
         'closing_time',
         'seating_capacity',
-        'image_data'
+        'image'
     ];
 
     public function categories()
