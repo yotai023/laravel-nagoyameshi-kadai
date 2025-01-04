@@ -160,40 +160,59 @@ class SubscriptionController extends Controller
     {
         $user = Auth::user();
 
-    try {
-        Log::info('Attempting to cancel subscription', [
-            'user_id' => $user->id,
-            'request_method' => $request->method()
-        ]);
+        try {
+            Log::info('Attempting to cancel subscription', [
+                'user_id' => $user->id,
+                'request_method' => $request->method()
+            ]);
 
-        if (!$user->subscription('premium_plan')) {
+            $subscription = $user->subscription('premium_plan');
+
+            if (!$subscription) {
+                return redirect()->route('user.index')
+                    ->with('error', '有料プランに未登録です。');
+            }
+
+            try {
+                $subscription->cancelNow();
+            } catch (Exception $stripeError) {
+                Log::warning('Stripe subscription not found, cleaning up local data', [
+                    'error' => $stripeError->getMessage(),
+                    'user_id' => $user->id
+                ]);
+            }
+
+            \DB::table('subscription_items')
+                ->whereIn('subscription_id', function ($query) use ($user) {
+                    $query->select('id')
+                        ->from('subscriptions')
+                        ->where('user_id', $user->id);
+                })
+                ->delete();
+
+            \DB::table('subscriptions')
+                ->where('user_id', $user->id)
+                ->delete();
+
+            $user->forceFill([
+                'stripe_id' => null,
+                'pm_type' => null,
+                'pm_last_four' => null,
+                'trial_ends_at' => null,
+            ])->save();
+
+            Log::info('Subscription cancelled successfully', ['user_id' => $user->id]);
+
             return redirect()->route('user.index')
-                ->with('error', '有料プランに未登録です。');
+                ->with('flash_message', '有料プランを解約しました。');
+        } catch (Exception $e) {
+            Log::error('Subscription cancellation failed', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id
+            ]);
+
+            return redirect()->back()
+                ->with('error', '解約処理に失敗しました。');
         }
-
-        // 即時解約を実行
-        $user->subscription('premium_plan')->cancelNow();
-
-        // 支払い方法の情報をクリア
-        $user->update([
-            'pm_type' => null,
-            'pm_last_four' => null,
-            'trial_ends_at' => null,
-        ]);
-
-        Log::info('Subscription cancelled successfully', ['user_id' => $user->id]);
-
-        return redirect()->route('user.index')
-            ->with('flash_message', '有料プランを解約しました。');
-            
-    } catch (Exception $e) {
-        Log::error('Subscription cancellation failed', [
-            'error' => $e->getMessage(),
-            'user_id' => $user->id
-        ]);
-        
-        return redirect()->back()
-            ->with('error', '解約処理に失敗しました。');
-    }
     }
 }
