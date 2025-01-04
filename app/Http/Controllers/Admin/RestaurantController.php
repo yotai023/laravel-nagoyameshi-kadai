@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Restaurant;
 use App\Models\Category;
-//use App\Models\RegularHoliday;
+use App\Models\RegularHoliday;
 
 class RestaurantController extends Controller
 {
@@ -44,10 +44,10 @@ class RestaurantController extends Controller
     public function create()
     {
         $categories = Category::all();
-        //$regular_holidays = RegularHoliday::all();
+        $regular_holidays = RegularHoliday::all();
 
         return view('admin.restaurants.create', [
-            //   'regular_holidays' => $regular_holidays,
+            'regular_holidays' => $regular_holidays,
             'categories' => $categories,
         ]);
     }
@@ -83,9 +83,9 @@ class RestaurantController extends Controller
         $category_ids = array_filter($request->input('category_ids'));
         $restaurant->categories()->sync($category_ids);
 
-        /* if ($request->has('regular_holiday_ids')) {
+        if ($request->has('regular_holiday_ids')) {
             $restaurant->regularHolidays()->sync($request->regular_holiday_ids);
-        }*/
+        }
 
         $restaurant->save();
 
@@ -100,13 +100,13 @@ class RestaurantController extends Controller
         $categories = Category::all();
         $category_ids = $restaurant->categories->pluck('id')->toArray();
 
-        // $regular_holidays = RegularHoliday::all();
+        $regular_holidays = RegularHoliday::all();
 
         return view('admin.restaurants.edit', [
             'restaurant' => $restaurant,
             'categories' => $categories,
             'category_ids' => $category_ids,
-            // 'regular_holidays' => $regular_holidays,
+            'regular_holidays' => $regular_holidays,
         ]);
     }
 
@@ -141,7 +141,7 @@ class RestaurantController extends Controller
         $category_ids = array_filter($request->input('category_ids'));
         $restaurant->categories()->sync($category_ids);
 
-        /* $restaurant->regular_holidays()->sync($request->regular_holiday_ids ?? []);*/
+        $restaurant->regular_holidays()->sync($request->regular_holiday_ids ?? []);
 
         return redirect()->route('admin.restaurants.index')
             ->withInput(['page' => $request->page])

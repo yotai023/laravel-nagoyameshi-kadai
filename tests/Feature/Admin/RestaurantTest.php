@@ -256,7 +256,7 @@ class RestaurantTest extends TestCase
         $category1 = Category::factory()->create();
         $category2 = Category::factory()->create();
 
-        //  $holiday = RegularHoliday::factory()->create();
+        $holiday = RegularHoliday::factory()->create();
 
         $this->actingAs($admin, 'admin');
 
@@ -272,7 +272,7 @@ class RestaurantTest extends TestCase
             'closing_time' => '22:00',
             'seating_capacity' => 50,
             'category_ids' => [$category1->id, $category2->id],
-            //    'regular_holiday_ids' => [$holiday->id],
+            'regular_holiday_ids' => [$holiday->id],
         ];
 
         $response = $this->put(route('admin.restaurants.update', $restaurant), $updateData);
