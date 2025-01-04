@@ -77,7 +77,7 @@ class RestaurantController extends Controller
             $image = $request->file('image');
 
             $imageData = base64_encode(file_get_contents($image->path()));
-            $restaurant->image_data = $imageData;
+            $restaurant->image = $imageData;
         }
 
         $category_ids = array_filter($request->input('category_ids'));
@@ -133,7 +133,7 @@ class RestaurantController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageData = base64_encode(file_get_contents($image->path()));
-            $restaurant->image_data = $imageData;
+            $restaurant->image = $imageData;
         }
 
         $restaurant->save();
