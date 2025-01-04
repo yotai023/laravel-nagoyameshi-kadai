@@ -80,14 +80,14 @@ class RestaurantController extends Controller
             $restaurant->image = $imageData;
         }
 
+        $restaurant->save();
+
         $category_ids = array_filter($request->input('category_ids'));
         $restaurant->categories()->sync($category_ids);
 
         if ($request->has('regular_holiday_ids')) {
-            $restaurant->regularHolidays()->sync($request->regular_holiday_ids);
+            $restaurant->regular_holidays()->sync($request->regular_holiday_ids);
         }
-
-        $restaurant->save();
 
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
     }
