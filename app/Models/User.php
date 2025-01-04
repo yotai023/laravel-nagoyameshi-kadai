@@ -49,4 +49,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function setPhoneNumberAttribute($value)
+    {
+        $this->attributes['phone_number'] = $value;
+    }
 }

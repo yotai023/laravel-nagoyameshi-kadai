@@ -9,7 +9,9 @@ use App\Models\Category;
 
 class HomeController extends Controller
 {
-    // Index アクション（トップページ）
+    /**
+     * トップページを表示
+     */
     public function index()
     {
         // restaurantsテーブルから6つのデータを取得
