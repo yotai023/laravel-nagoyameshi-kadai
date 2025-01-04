@@ -12,7 +12,7 @@ class Restaurant extends Model
 {
     use HasFactory;
 
-   // use Sortable;
+    // use Sortable;
 
     // ソート可能なカラムを指定
     public $sortable = [
@@ -20,7 +20,7 @@ class Restaurant extends Model
         'lowest_price'
     ];
 
-   /* public function scopeRatingSortable($query)
+    /* public function scopeRatingSortable($query)
     {
         return $query
             ->withAvg('reviews', 'score')
@@ -42,12 +42,12 @@ class Restaurant extends Model
         'image_data'
     ];
 
-    /*public function categories()
+    public function categories()
     {
         return $this->belongsToMany(Category::class);
     }
 
-    public function regular_holidays()
+    /*public function regular_holidays()
     {
         return $this->belongsToMany(RegularHoliday::class, 'regular_holiday_restaurant');
     }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Restaurant;
-//use App\Models\Category;
+use App\Models\Category;
 //use App\Models\RegularHoliday;
 
 class RestaurantController extends Controller
@@ -43,12 +43,12 @@ class RestaurantController extends Controller
      */
     public function create()
     {
-        // $categories = Category::all();
-        // $regular_holidays = RegularHoliday::all();
+        $categories = Category::all();
+        //$regular_holidays = RegularHoliday::all();
 
         return view('admin.restaurants.create', [
             //   'regular_holidays' => $regular_holidays,
-            //   'categories' => $categories,
+            'categories' => $categories,
         ]);
     }
 
@@ -71,7 +71,7 @@ class RestaurantController extends Controller
         ]);
 
         $restaurant = new Restaurant($request->except('image'));
-       
+
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -80,10 +80,10 @@ class RestaurantController extends Controller
             $restaurant->image_data = $imageData;
         }
 
-        /* $category_ids = array_filter($request->input('category_ids'));
+        $category_ids = array_filter($request->input('category_ids'));
         $restaurant->categories()->sync($category_ids);
 
-        if ($request->has('regular_holiday_ids')) {
+        /* if ($request->has('regular_holiday_ids')) {
             $restaurant->regularHolidays()->sync($request->regular_holiday_ids);
         }*/
 
@@ -97,15 +97,15 @@ class RestaurantController extends Controller
      */
     public function edit(Restaurant $restaurant)
     {
-        // $categories = Category::all();
-        // $category_ids = $restaurant->categories->pluck('id')->toArray();
+        $categories = Category::all();
+        $category_ids = $restaurant->categories->pluck('id')->toArray();
 
         // $regular_holidays = RegularHoliday::all();
 
         return view('admin.restaurants.edit', [
             'restaurant' => $restaurant,
-            //'categories' => $categories, 
-            // 'category_ids' => $category_ids,
+            'categories' => $categories,
+            'category_ids' => $category_ids,
             // 'regular_holidays' => $regular_holidays,
         ]);
     }
@@ -138,10 +138,10 @@ class RestaurantController extends Controller
 
         $restaurant->save();
 
-        /* $category_ids = array_filter($request->input('category_ids'));
-       $restaurant->categories()->sync($category_ids);
+        $category_ids = array_filter($request->input('category_ids'));
+        $restaurant->categories()->sync($category_ids);
 
-       $restaurant->regular_holidays()->sync($request->regular_holiday_ids ?? []);*/
+        /* $restaurant->regular_holidays()->sync($request->regular_holiday_ids ?? []);*/
 
         return redirect()->route('admin.restaurants.index')
             ->withInput(['page' => $request->page])

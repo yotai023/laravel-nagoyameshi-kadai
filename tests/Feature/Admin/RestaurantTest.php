@@ -6,7 +6,7 @@ use Tests\TestCase;
 use App\Models\Admin;
 use App\Models\User;
 use App\Models\Restaurant;
-//use App\Models\Category;
+use App\Models\Category;
 use App\Models\RegularHoliday;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -157,7 +157,7 @@ class RestaurantTest extends TestCase
             'opening_time' => '10:00',
             'closing_time' => '22:00',
             'seating_capacity' => 50,
-            //'category_ids' => [1, 2],
+            'category_ids' => [1, 2],
             'regular_holiday_ids' => [1],
         ]);
 
@@ -253,8 +253,8 @@ class RestaurantTest extends TestCase
 
         $restaurant = Restaurant::factory()->create();
 
-        //  $category1 = Category::factory()->create();
-        //  $category2 = Category::factory()->create();
+        $category1 = Category::factory()->create();
+        $category2 = Category::factory()->create();
 
         //  $holiday = RegularHoliday::factory()->create();
 
@@ -271,7 +271,7 @@ class RestaurantTest extends TestCase
             'opening_time' => '10:00',
             'closing_time' => '22:00',
             'seating_capacity' => 50,
-            //  'category_ids' => [$category1->id, $category2->id],
+            'category_ids' => [$category1->id, $category2->id],
             //    'regular_holiday_ids' => [$holiday->id],
         ];
 
