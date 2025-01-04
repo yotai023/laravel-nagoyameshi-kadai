@@ -70,22 +70,14 @@ class RestaurantController extends Controller
             'seating_capacity' => 'nullable|numeric|min:0',
         ]);
 
-        $restaurant = new Restaurant();
-        $restaurant->name = $request->input('name');
-        $restaurant->description = $request->input('description');
-        $restaurant->lowest_price = $request->input('lowest_price');
-        $restaurant->highest_price = $request->input('highest_price');
-        $restaurant->postal_code = $request->input('postal_code');
-        $restaurant->address = $request->input('address');
-        $restaurant->opening_time = $request->input('opening_time');
-        $restaurant->closing_time = $request->input('closing_time');
-        $restaurant->seating_capacity = $request->input('seating_capacity');
+        $restaurant = new Restaurant($request->except('image'));
+       
 
         if ($request->hasFile('image')) {
-            $image_path = $request->file('image')->store('restaurants', 'public');
-            $restaurant->image = basename($image_path);
-        } else {
-            $restaurant->image = '';
+            $image = $request->file('image');
+
+            $imageData = base64_encode(file_get_contents($image->path()));
+            $restaurant->image_data = $imageData;
         }
 
         /* $category_ids = array_filter($request->input('category_ids'));
@@ -136,22 +128,12 @@ class RestaurantController extends Controller
             'seating_capacity' => 'nullable|numeric|min:0',
         ]);
 
-        $restaurant->name = $request->input('name');
-        $restaurant->description = $request->input('description');
-        $restaurant->lowest_price = $request->input('lowest_price');
-        $restaurant->highest_price = $request->input('highest_price');
-        $restaurant->postal_code = $request->input('postal_code');
-        $restaurant->address = $request->input('address');
-        $restaurant->opening_time = $request->input('opening_time');
-        $restaurant->closing_time = $request->input('closing_time');
-        $restaurant->seating_capacity = $request->input('seating_capacity');
+        $restaurant->fill($request->except('image'));
 
-        if ($request->hasFile('image') && $request->file('image')->isValid()) {
-            $path = $request->file('image')->store('public/restaurants');
-
-            $fileName = basename($path);
-
-            $restaurant->image = $fileName;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageData = base64_encode(file_get_contents($image->path()));
+            $restaurant->image_data = $imageData;
         }
 
         $restaurant->save();
@@ -161,9 +143,9 @@ class RestaurantController extends Controller
 
        $restaurant->regular_holidays()->sync($request->regular_holiday_ids ?? []);*/
 
-       return redirect()->route('admin.restaurants.index')
-       ->withInput(['page' => $request->page])
-       ->with('flash_message', '店舗情報を編集しました。');
+        return redirect()->route('admin.restaurants.index')
+            ->withInput(['page' => $request->page])
+            ->with('flash_message', '店舗情報を編集しました。');
     }
 
     /**

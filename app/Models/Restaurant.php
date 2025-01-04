@@ -39,6 +39,7 @@ class Restaurant extends Model
         'opening_time',
         'closing_time',
         'seating_capacity',
+        'image_data'
     ];
 
     /*public function categories()
