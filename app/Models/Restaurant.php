@@ -6,13 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\RegularHoliday;
 use App\Models\Category;
-//use Kyslik\ColumnSortable\Sortable;
+use Kyslik\ColumnSortable\Sortable;
 
 class Restaurant extends Model
 {
-    use HasFactory;
-
-    // use Sortable;
+    use HasFactory, Sortable;
 
     // ソート可能なカラムを指定
     public $sortable = [
@@ -20,12 +18,12 @@ class Restaurant extends Model
         'lowest_price'
     ];
 
-    /* public function scopeRatingSortable($query)
+    public function scopeRatingSortable($query)
     {
         return $query
             ->withAvg('reviews', 'score')
             ->orderBy('reviews_avg_score', 'desc');
-    }*/
+    }
 
 
     protected $fillable = [
