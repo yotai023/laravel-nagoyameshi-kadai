@@ -8,10 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Laravel\Cashier\Billable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -54,4 +55,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->attributes['phone_number'] = $value;
     }
+    
+    public function subscribed($premium_plan)
+    {
+        return !is_null($this->stripe_id);
+    }
+
+
 }

@@ -55,12 +55,11 @@ Route::group(['middleware' => ['guest:admin']], function () {
 
     Route::get('restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
     Route::get('restaurants/{restaurant}', [RestaurantController::class, 'show'])->name('restaurants.show');
-    
+
     Route::get('company', [CompanyController::class, 'index'])->name('company.index');
     Route::get('terms', [TermController::class, 'index'])->name('terms.index');
 
     Route::group(['middleware' => ['auth']], function () {
-
         // 普通会員
         Route::resource('user', UserController::class)->only(['index', 'edit', 'update']);
         Route::resource('restaurants.reviews', ReviewController::class)->except(['show']);
@@ -78,10 +77,11 @@ Route::group(['middleware' => ['guest:admin']], function () {
         Route::get('subscription/create', [SubscriptionController::class, 'create'])
             ->name('subscription.create');
 
+        Route::post('subscription', [SubscriptionController::class, 'store'])->name('subscription.store');
+
         // 有料プラン
         Route::group(['middleware' => 'subscribed'], function () {
             // プレミアム機能管理
-            Route::post('subscription', [SubscriptionController::class, 'store'])->name('subscription.store');
             Route::get('subscription/edit', [SubscriptionController::class, 'edit'])->name('subscription.edit');
             Route::patch('subscription', [SubscriptionController::class, 'update'])->name('subscription.update');
             Route::get('subscription/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
