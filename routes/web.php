@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,4 +27,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
 
     Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
     Route::get('users/{id}', [AdminUserController::class, 'show'])->name('users.show');
+
+    Route::resource('restaurants', AdminRestaurantController::class);
 });
