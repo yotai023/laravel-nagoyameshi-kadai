@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,12 +25,24 @@
 
     @stack('styles')
 </head>
+
 <body>
     <div id="app" class="nagoyameshi-wrapper">
         @include('layouts.header')
 
         <main>
+            @if (Auth::guard('admin')->check())
+            <div class="container-fluid py-4 nagoyameshi-container">
+                <div class="row">
+                    @include('layouts.sidebar')
+                    <div class="col-md-10 ms-auto">
+                        @yield('content')
+                    </div>
+                </div>
+            </div>
+            @else
             @yield('content')
+            @endif
         </main>
 
         @include('layouts.footer')
@@ -40,3 +53,5 @@
 
     @stack('scripts')
 </body>
+
+</html>
