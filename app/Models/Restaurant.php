@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\RegularHoliday;
 use App\Models\Category;
 use App\Models\Review;
+use App\Models\Reservation;
 use Kyslik\ColumnSortable\Sortable;
 
 class Restaurant extends Model
@@ -61,7 +62,7 @@ class Restaurant extends Model
             ->orderBy('reviews_avg_score', $direction);
     }
 
-    /*public function scopePopularSortable($query)
+    public function scopePopularSortable($query)
     {
         return $query
             ->withCount('reservations')
@@ -70,10 +71,10 @@ class Restaurant extends Model
 
     public function reservations()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(Reservation::class);
     }
 
-    public function favorite_restaurants()
+    /*public function favorite_restaurants()
     {
         return $this->belongsToMany(User::class, 'restaurant_user')
             ->withTimestamps();

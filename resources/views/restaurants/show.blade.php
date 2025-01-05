@@ -29,7 +29,7 @@
                         <a class="nav-link active text-white nagoyameshi-bg" aria-current="page" href="{{ route('restaurants.show', $restaurant) }}">トップ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link link-dark" href="#">予約</a>
+                        <a class="nav-link link-dark" href="{{ route('restaurants.reservations.create', $restaurant) }}">予約</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link link-dark" href="{{ route('restaurants.reviews.index', $restaurant) }}">レビュー</a>
@@ -38,7 +38,7 @@
 
                 <div class="mb-2">
                     @if ($restaurant->image !== '')
-                        <img src="data:image/jpeg;base64, {{ $restaurant->image }}" class="w-100">
+                        <img src="{{ asset('storage/restaurants/' . $restaurant->image) }}" class="w-100">
                     @else
                         <img src="{{ asset('/images/no_image.jpg') }}" class="w-100">
                     @endif

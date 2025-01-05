@@ -60,8 +60,7 @@ class RestaurantController extends Controller
         }
 
         // 並び替えとページネーションの適用
-        $restaurants = $query
-            //->withCount('reservations')
+        $restaurants = $query->withCount('reservations')
             ->sortable($sort_query)
             ->orderBy('created_at', 'desc')
             ->paginate(15);
