@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Laravel\Cashier\Billable;
+use App\Models\Review;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -61,5 +62,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return !is_null($this->stripe_id);
     }
 
-
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

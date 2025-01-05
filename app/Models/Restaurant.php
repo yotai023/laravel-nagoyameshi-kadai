@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\RegularHoliday;
 use App\Models\Category;
+use App\Models\Review;
 use Kyslik\ColumnSortable\Sortable;
 
 class Restaurant extends Model
@@ -49,12 +50,18 @@ class Restaurant extends Model
         return $this->belongsToMany(RegularHoliday::class, 'regular_holiday_restaurant', 'restaurant_id', 'regular_holiday_id');
     }
 
-    /*public function reviews()
+    public function reviews()
     {
         return $this->hasMany(Review::class);
     }
 
-    public function scopePopularSortable($query)
+    public function ratingSortable($query, $direction)
+    {
+        return $query->withAvg('reviews', 'score')
+            ->orderBy('reviews_avg_score', $direction);
+    }
+
+    /*public function scopePopularSortable($query)
     {
         return $query
             ->withCount('reservations')
