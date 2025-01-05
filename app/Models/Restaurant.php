@@ -74,9 +74,9 @@ class Restaurant extends Model
         return $this->hasMany(Reservation::class);
     }
 
-    /*public function favorite_restaurants()
+    public function favorite_restaurants()
     {
-        return $this->belongsToMany(User::class, 'restaurant_user')
+        return $this->belongsToMany(User::class, 'restaurant_user', 'user_id', 'restaurant_id')
             ->withTimestamps();
-    }*/
+    }
 }

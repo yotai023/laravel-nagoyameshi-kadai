@@ -91,8 +91,8 @@ Route::group(['middleware' => ['guest:admin']], function () {
 
             // お気に入り機能
             Route::get('favorites', [FavoriteController::class, 'index'])->name('favorites.index');
-            Route::post('favorites/{restaurant_id}', [FavoriteController::class, 'store'])->name('favorites.store');
-            Route::delete('favorites/{restaurant_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
+            Route::post('favorites/{restaurant}', [FavoriteController::class, 'store'])->name('favorites.store');
+            Route::delete('favorites/{restaurant}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
         });
     });
 });
