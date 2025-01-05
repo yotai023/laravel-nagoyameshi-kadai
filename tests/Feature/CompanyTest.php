@@ -12,6 +12,8 @@ use App\Models\Company;
 
 class CompanyTest extends TestCase 
 {
+    use RefreshDatabase;
+    
     /**
      * 未ログインのユーザーは会員側の会社概要ページにアクセスできる
      */

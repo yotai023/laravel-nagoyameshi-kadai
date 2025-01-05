@@ -12,6 +12,8 @@ use App\Models\Term;
 
 class TermTest extends TestCase
 {
+    use RefreshDatabase;
+    
     /**
      * 未ログインのユーザーは会員側の会社概要ページにアクセスできる
      */
