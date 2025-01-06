@@ -117,7 +117,7 @@ class RestaurantController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpg,jpeg,png,bmp,gif,svg,webp|max:2048',
+            'image' => 'sometimes|image|mimes:jpg,jpeg,png,bmp,gif,svg,webp|max:2048|default("")',
             'description' => 'required|string|max:255',
             'lowest_price' => 'required|numeric|min:0|lte:highest_price',
             'highest_price' => 'required|numeric|min:0|gte:lowest_price',
