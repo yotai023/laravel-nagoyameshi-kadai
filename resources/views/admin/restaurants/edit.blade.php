@@ -51,7 +51,7 @@
 
                     <!-- 選択された画像の表示場所 -->
                     @if ($restaurant->image !== '')
-                        <div class="row" id="imagePreview"><img src="data:image/jpeg;base64, {{ $restaurant->image) }}" class="mb-3"></div>
+                        <div class="row" id="imagePreview"><img src="data:image/jpeg;base64,{{ $restaurant->image }}" class="mb-3"></div>
                     @else
                         <div class="row" id="imagePreview"></div>
                     @endif
