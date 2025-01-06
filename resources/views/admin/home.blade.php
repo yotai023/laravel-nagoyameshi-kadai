@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
-
 <div class="row row-cols-md-3 row-cols-2 g-3 mb-5">
     <div class="col">
         <div class="card bg-light">
